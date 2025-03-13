@@ -21,7 +21,7 @@ This Hospital Management System provides a comprehensive solution for managing h
 
 ## Technology Stack
 
-- **Java 8+**
+- **Java 17**
 - **Spring Boot** - Framework for creating stand-alone, production-grade Spring-based applications
 - **Spring Data JPA** - For data persistence using JPA
 - **Hibernate** - ORM tool for database operations
