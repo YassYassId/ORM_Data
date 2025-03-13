@@ -1,16 +1,21 @@
 package com.jpa.orm_data;
 
-import com.jpa.orm_data.entities.Patient;
+import com.jpa.orm_data.entities.*;
+import com.jpa.orm_data.repositories.ConsultatonRepository;
+import com.jpa.orm_data.repositories.MedecinRepository;
 import com.jpa.orm_data.repositories.PatientRepository;
+import com.jpa.orm_data.repositories.RendezVousRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @SpringBootApplication
 public class OrmDataApplication {
@@ -22,8 +27,55 @@ public class OrmDataApplication {
         SpringApplication.run(OrmDataApplication.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
+
+    @Bean
+    CommandLineRunner start(PatientRepository patientRepository,
+                            MedecinRepository medecinRepository,
+                            ConsultatonRepository consultatonRepository,
+                            RendezVousRepository rendezVousRepository) {
+        return args -> {
+            Stream.of("Mohammed","Saad", "Walid")
+                    .forEach(name -> {
+                        Patient patient = new Patient();
+                        patient.setNom(name);
+                        patient.setDateNaissance(new Date());
+                        patient.setMalade(false);
+                        patient.setScore(88);
+                        patientRepository.save(patient);
+                    });
+            Stream.of("Yassine","Amal", "Soufiane")
+                    .forEach(name -> {
+                        Medecin medecin = new Medecin();
+                        medecin.setNom(name);
+                        medecin.setSpecialite(Math.random()>0.5?"Cardio":"Dentiste");
+                        medecin.setEmail(name + "@gmail.com");
+                        medecinRepository.save(medecin);
+                    });
+
+            Patient patient = patientRepository.findById(1L).orElse(null);
+            Patient patient1 = patientRepository.findPatientByNom("Mohammed");
+
+            Medecin medecin = medecinRepository.findMedecinByNom("Yassine");
+
+            RendezVous rendezVous = new RendezVous();
+            rendezVous.setDate(new Date());
+            rendezVous.setStatus(StatusRDV.PENDING);
+            rendezVous.setMedecin(medecin);
+            rendezVous.setPatient(patient);
+            rendezVousRepository.save(rendezVous);
+
+
+            RendezVous rendezVous1 = rendezVousRepository.findById(1l).orElse(null);
+            Consultation consultation = new Consultation();
+            consultation.setDateConsultation(new Date());
+            consultation.setRendezVous(rendezVous1);
+            consultation.setRapport("Rapport de consultation");
+            consultatonRepository.save(consultation);
+        };
+    }
+
+//    @Override
+//    public void run(String... args) throws Exception {
 //        Calendar calendar1 = Calendar.getInstance();
 //        calendar1.set(2000, Calendar.DECEMBER, 1);
 //        Date d1 = calendar1.getTime();
@@ -62,6 +114,6 @@ public class OrmDataApplication {
 //            System.out.println("Patient not found!");
 //        }
 
-    }
+//    }
 }
 
