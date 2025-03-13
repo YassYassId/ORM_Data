@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SpringBootApplication
-public class OrmDataApplication implements CommandLineRunner {
+public class OrmDataApplication {
 
     @Autowired
     private PatientRepository patientRepository;
